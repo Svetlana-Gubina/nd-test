@@ -1,0 +1,93 @@
+:root {
+  --bg-dark: #0A1F38;
+  --bg-dark-middle:#1B2F46;
+  --bg-dark-light: #2F4056;
+  --gray: #9DA5AF;
+  
+  --green-dark: #819400;
+  --green-middle: #97AB0D;
+  --green: #A5BB0C;
+  --green-light: #B1C909;
+  --white:#FFFFFF;
+
+  --font-small: 18px;
+
+ 
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  text-decoration: none;
+  color: var(--green-light);
+}
+a:hover {
+  color: var(--white);
+}
+
+body {
+  margin: 0;
+  display: flex;
+  min-width: 360px;
+  min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1.6;
+  font-weight: 400;
+  color: var(--white);
+  background-color: var(--bg-dark);
+}
+
+h1 {
+  font-size: 5.2em;
+  line-height: 1.1;
+}
+
+h2 {
+  font-size: 2.4em;
+  line-height: 1.5;
+}
+
+h3 {
+  font-size: 1.6em;
+}
+
+h4 {
+  font-size: 1.2em;
+}
+
+button {
+  cursor: pointer;
+}
+button:hover {
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+
+#app {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+
