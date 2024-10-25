@@ -75,12 +75,25 @@ h4 {
 
 button {
   cursor: pointer;
+  background-color: var(--green-light);
+  color: var(--white);
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1.6
 }
 button:hover {
+  background-color: var(--green);
+}
+button:active {
+  background-color: var(--green-dark);
 }
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+button:disabled {
+  background-color: var(--gray);
 }
 
 

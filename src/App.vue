@@ -20,8 +20,6 @@ import HomeView from './components/HomeView.vue'
   align-items: center;
   justify-content: space-between;
   height: 100%;
-
-  outline: 2px dashed hotpink;
 }
 
 @media (max-width: 1366px) {
