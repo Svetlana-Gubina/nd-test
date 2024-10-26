@@ -6,11 +6,12 @@ const notes = ref([]);
 
 <template>
     <div class="wrapper">
-        <ul class="notes-list">
+        <h1>Hello form notes!</h1>
+        <!-- <ul class="notes-list">
             <li class="notes-item" v-for="note in notes">
                 {{ note }}
             </li>
-        </ul>
+        </ul> -->
     </div>
 </template>
 

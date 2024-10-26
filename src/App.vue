@@ -1,14 +1,12 @@
 <script setup>
 import MainHeader from './components/MainHeader.vue'
-import HomeView from './components/HomeView.vue'
 </script>
 
 <template>
   <MainHeader/>
 
   <main class="page-main">
-    <HomeView />
-  
+    <router-view />
   </main>
   
 </template>

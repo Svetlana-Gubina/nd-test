@@ -1,23 +1,24 @@
-import { createMemoryHistory, createRouter } from 'vue-router';
-
-import HomeView from '../components/HomeView.vue';
-import NotesView from '../components/NotesView.vue';
-
-const routes = [
-  { path: '/', name: 'Home', component: HomeView },
-  {
-    path: '/notes',
-    name: 'Notes',
-    component: NotesView,
-    meta: {
-      requiresAuth: true,
-    },
-  },
-];
+import { createWebHistory, createRouter } from 'vue-router';
 
 const router = createRouter({
-  history: createMemoryHistory(),
-  routes,
+  routes: [
+    {
+      path: '/',
+      name: 'Home',
+      component: () => import('@/components/HomeView.vue'),
+    },
+    {
+      path: '/notes',
+      name: 'Notes',
+      component: () => import('@/components/NotesView.vue'),
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'Not found',
+      component: () => import('@/components/PageNotFoundView.vue'),
+    },
+  ],
+  history: createWebHistory('/'),
 });
 
 router.beforeEach((to, from, next) => {

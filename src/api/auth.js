@@ -3,6 +3,7 @@ import axios from 'axios';
 
 const basePath = 'https://dist.nd.ru/';
 const AUTH_KEY = 'user';
+const AUTH_TOKEN = '';
 
 export const api = axios.create({
   baseURL: basePath,
@@ -41,7 +42,7 @@ export const useApi = (endpoint) => {
         acc[field].push(msg);
 
         return acc;
-      }, {}); // eg. { email: [ 'email is required' ] }
+      }, {});
     }
   });
 

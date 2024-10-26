@@ -112,7 +112,7 @@ const onLogginOut = () => {
 .logo {
   width: 220px;
   height: 50px;
-
+  margin-right: 10px;
 }
 
 .logo svg {
@@ -147,44 +147,36 @@ const onLogginOut = () => {
   height: 20px;
 }
 
-@media  (max-width: 360px){
-  .logo {
-  width: 154px;
-  height: 36px;
-  }
-  .logo svg {
-    width: 154px;
-    height: 36px;
-}
-}
 
 .login-btn {
-  display: flex;
-  padding: 5px 24px;
-  justify-content: center;
-  align-items: center;
-  border-radius: 32px;
-  background: var(--green-light);
-  color: var(--white);
+display: flex;
+padding: 5px 24px;
+justify-content: center;
+align-items: center;
+border-radius: 32px;
+background: var(--green-light);
+color: var(--white);
 }
 
 .login-btn i{
-  margin-right: 5px;
+margin-right: 5px;
 }
 
 .login-btn:hover {
-  background-color: var(--green-middle);
+background-color: var(--green-middle);
 }
 .login-btn:focus,
 .login-btn:active {
-  background-color: var(--green-dark);
+background-color: var(--green-dark);
 }
- 
+
 .login-btn svg {
-  width: 32px;
-  height: 32px;
-  fill: var(--white);
+width: 32px;
+height: 32px;
+fill: var(--white);
 }
+
+
 
 @media (max-width: 1366px) {
   .header {
@@ -196,6 +188,21 @@ const onLogginOut = () => {
   .header {
   padding: 20px 40px;
 }
+
+}
+
+@media (max-width: 767px) {
+ 
+.logo {
+  width: 154px;
+  height: 36px;
+  
+}
+.logo svg {
+  width: 154px;
+  height: 36px;
+  
+}
 }
 
 @media (max-width: 360px) {
@@ -206,6 +213,13 @@ const onLogginOut = () => {
 .logo {
   width: 154px;
   height: 36px;
+  
+}
+.logo svg {
+  width: 154px;
+  height: 36px;
+  
 }
 }
+
 </style>

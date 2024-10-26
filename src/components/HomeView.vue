@@ -5,15 +5,17 @@
 </script>
 
 <template>
-  <section class="main-title">
+  
+    <section class="main-title">
     <div class="main-title__text">
         <h1>Мои
         заметки</h1>
         <p class="subtitle">Не забывай о важном, храни его в облаке.</p>
+        <router-link to="/notes">Notes</router-link>
     </div>
     
   </section>
- <!-- <router-view />  -->
+ 
 </template>
 
 <style scoped>
@@ -57,7 +59,7 @@
 
 @media (max-width: 1200px) {
     .main-title {
-    background-size: 55% 80%;
+    background-size: 55% 70%;
   }
 }
 
@@ -103,14 +105,14 @@
 
 @media (max-width: 768px) {
     .main-title {
-    background-size: 100% 60%;
+    background-size: 100% 70%;
   }
 
 }
 
 @media (max-width: 600px) {
     .main-title {
-    background-size: 100% 50%;
+    background-size: 100% 45%;
     background-position: 50% 50%;
   }
 
@@ -120,9 +122,9 @@
   }
 }
 
-@media (max-width: 420px) {
+@media (max-width: 430px) {
     .main-title {
-    background-size: 100% 40%;
+    background-size: 100% 30%;
     background-position: 50% 40%;
   }
 }
@@ -130,7 +132,7 @@
 @media (max-width: 360px) {
     .main-title {
     min-height: 640px;
-    background-size: 100% 60%;
+    background-size: 100% 50%;
     background-position: 50% 100%;
   }
 

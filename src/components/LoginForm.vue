@@ -58,14 +58,14 @@ const onLoginFormSubmit = () => {
 schema.validate(user.value, { abortEarly: false })
         .then(() => {
           errors.value = {};
-
-          post(request).then(() => {
-          // If successful, update the Auth state
-          setUser(data.value);
-
-          // Redirect to the home page
           router.push({ name: "Notes" });
-          });
+          // post(request).then(() => {
+          // // If successful, update the Auth state
+          // setUser(data.value);
+
+          // // Redirect to the home page
+          // router.push({ name: "Notes" });
+          // });
         })
         .catch(err => {
           err.inner.forEach(error => {
