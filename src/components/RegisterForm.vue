@@ -1,32 +1,60 @@
 <script setup>
-// import { defineProps, defineEmits, ref } from "vue";
+import { defineProps, defineEmits, ref } from "vue";
+import {useApi, useAuth} from "../api/auths";
+import LoadingView from "./LoadingView.vue";
 
+const emit = defineEmits(["go-to-login"]);
 
-const user = {
+const {
+      error,
+      loading,
+      post,
+      data,
+      errorMessage,
+      errorDetails,
+      errorFields,
+    } = useApi('/auth/reg');
+
+const { setUser } = useAuth()
+
+const formData = {
     email: '',
     password: '',
     passwordRepeat: ''
 }
 
+const onSubmitRegisterForm = () => {
+  post(formData).then(() => {
+    
+    setUser(data.value, true)
+    
+  });
+}
+
+const onLoginLinkClick = () => {
+    emit("go-to-login");
+}
+
 </script>
 
 <template>
+  <LoadingView v-if="loading" />
   <div class="form-wrapper">
     <h2>Регистрация</h2>
     
-    <form class="form" method="POST">
+    <form class="form" method="POST" @submit.prevent="onSubmitRegisterForm">
       <label for="email">Email</label>
-        <input type="email" id="email" v-model="user.email" placeholder="Введите значение"/>
+        <input type="email" id="email" v-model="formData.email" placeholder="Введите значение" required/>
 
         <label for="password">Пароль</label>
-        <input type="password" id="password" v-model="user.password" placeholder="Введите пароль"/>
+        <input type="password" id="password" v-model="formData.password" placeholder="Введите пароль" required/>
 
         <label for="password">Пароль ещё раз</label>
-        <input type="password" id="password" v-model="user.passwordRepeat" placeholder="Ввод|"/>
+        <input type="password" id="password" v-model="formData.passwordRepeat" placeholder="Ввод|" required/>
         
 
         <div class="form__footer">
-          <p class="no-account">У вас есть аккаунт? <router-link to="#">Войдите</router-link></p>
+          <p class="account">У вас есть аккаунт? <a href="#" @click.prevent="onLoginLinkClick">Войдите</a></p>
 
         <button type="submit">Зарегистрироваться</button>
         </div>
@@ -70,13 +98,15 @@ const user = {
   border-radius: 36px;
   background: var(--white);
   padding:  16px;
+  margin-bottom: 24px;
+
 }
 
 .form input:last-of-type {
   margin-bottom: 40px;
 }
 
-.no-account {
+.account {
   font-size: var(--font-small);
   font-style: normal;
   font-weight: 400;
@@ -105,8 +135,7 @@ const user = {
     line-height: 1.1;
 }
 
-.no-account,
-.error-message {
+.no-account {
   font-size: 14px;
   font-style: normal;
   font-weight: 400;

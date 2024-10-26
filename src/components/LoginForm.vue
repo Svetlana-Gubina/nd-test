@@ -1,9 +1,35 @@
 <script setup>
 import { defineProps, defineEmits, ref } from "vue";
+import { useRouter } from 'vue-router';
+import {useApi, useAuth} from "../api/auths";
 
 const emit = defineEmits(["go-to-register"]);
-
 const isError = ref(false);
+
+const {
+  loading,
+  data,
+  error,
+  post,
+  errorMessage,
+  errorFields
+} = useApi("auth/auth")
+
+// Authentication details
+const { setUser } = useAuth();
+
+// Router instance
+const router = useRouter();
+
+const onLoginFormSubmit = () => {
+  post(payload).then(() => {
+    // If successful, update the Auth state
+    setUser(data.value);
+
+    // Redirect to the home page
+    router.push({ name: "Notes" });
+  });
+};
 
 const user = {
     email: '',
@@ -20,12 +46,12 @@ const onRegisterLinkClick = () => {
   <div class="form-wrapper">
     <h2>Вход в ваш аккаунт</h2>
     
-    <form class="form" method="POST">
+    <form class="form" method="POST" @submit.prevent="onLoginFormSubmit">
       <label for="email">Email</label>
-        <input type="email" id="email" v-model="user.email" placeholder="Введите значение"/>
+        <input type="email" id="email" v-model="user.email" placeholder="Введите значение" required/>
 
         <label for="password">Пароль</label>
-        <input type="password" id="password" v-model="user.password" placeholder="Введите пароль"/>
+        <input type="password" id="password" v-model="user.password" placeholder="Введите пароль" required/>
         
 
         <div class="form__footer">
@@ -77,6 +103,7 @@ const onRegisterLinkClick = () => {
   border-radius: 36px;
   background: var(--white);
   padding:  16px;
+  margin-bottom: 24px;
 }
 
 .form input:last-of-type {
