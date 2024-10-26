@@ -8,7 +8,9 @@ import HomeView from './components/HomeView.vue'
 
   <main class="page-main">
     <HomeView />
+  
   </main>
+  
 </template>
 
 <style scoped>

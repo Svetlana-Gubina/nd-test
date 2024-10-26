@@ -1,7 +1,9 @@
 <script setup>
 import { defineProps, defineEmits, ref } from "vue";
 import { useRouter } from 'vue-router';
-import {useApi, useAuth} from "../api/auths";
+import {useApi, useAuth} from "@/api/auth";
+
+import * as Yup from "yup";
 
 const emit = defineEmits(["go-to-register"]);
 const isError = ref(false);
@@ -13,7 +15,7 @@ const {
   post,
   errorMessage,
   errorFields
-} = useApi("auth/auth")
+} = useApi("/auth")
 
 // Authentication details
 const { setUser } = useAuth();
@@ -21,20 +23,58 @@ const { setUser } = useAuth();
 // Router instance
 const router = useRouter();
 
-const onLoginFormSubmit = () => {
-  post(payload).then(() => {
-    // If successful, update the Auth state
-    setUser(data.value);
-
-    // Redirect to the home page
-    router.push({ name: "Notes" });
-  });
-};
-
-const user = {
+const user = ref({
     email: '',
     password: ''
+})
+
+const errors = ref({
+    email: '',
+    password: '',
+    passwordConfirm: ''
+})
+
+const schema = Yup.object().shape({
+  email: Yup.string().required("Введите email").email("Необходим корректный email"),
+  password: Yup.string().required("Введите пароль"),
+ });
+
+ const validate = (field) => {
+  schema.validateAt(field, user.value)
+        .then(() => {
+          errors.value[field] = "";
+        })
+        .catch(err => {
+          errors.value[field] = err.message;
+        });
 }
+
+const onLoginFormSubmit = () => {
+  const request = {
+  email: user.value.email,
+  password: user.value.password,
+};
+
+schema.validate(user.value, { abortEarly: false })
+        .then(() => {
+          errors.value = {};
+
+          post(request).then(() => {
+          // If successful, update the Auth state
+          setUser(data.value);
+
+          // Redirect to the home page
+          router.push({ name: "Notes" });
+          });
+        })
+        .catch(err => {
+          err.inner.forEach(error => {
+            errors.value[error.path] = error.message;
+            console.log('errors: ', errors.value)
+          });
+        });
+
+};
 
 const onRegisterLinkClick = () => {
   emit("go-to-register");
@@ -46,13 +86,18 @@ const onRegisterLinkClick = () => {
   <div class="form-wrapper">
     <h2>Вход в ваш аккаунт</h2>
     
-    <form class="form" method="POST" @submit.prevent="onLoginFormSubmit">
+    <form class="form" method="POST" @submit.prevent="onLoginFormSubmit" novalidate :validation-schema="schema">
       <label for="email">Email</label>
-        <input type="email" id="email" v-model="user.email" placeholder="Введите значение" required/>
+        <input type="email" id="email" v-model="user.email" placeholder="Введите значение" @blur="validate('email')"/>
+        <p class="error-message" v-if="!!errors.email">
+          {{ errors.email }}
+        </p>
 
         <label for="password">Пароль</label>
-        <input type="password" id="password" v-model="user.password" placeholder="Введите пароль" required/>
-        
+        <input type="password" id="password" v-model="user.password" placeholder="Введите пароль" @blur="validate('password')"/>
+        <p class="error-message" v-if="!!errors.password">
+          {{ errors.password }}
+        </p>
 
         <div class="form__footer">
           <p class="no-account">У вас еще нет аккаунта? <a href="#" @click.prevent="onRegisterLinkClick">Зарегистрируйтесь</a></p>
@@ -60,8 +105,8 @@ const onRegisterLinkClick = () => {
         <button type="submit">Войти</button>
         </div>
 
-        <div v-if="isError"  class="error-message">
-          Пользователь с таким логином не найден
+        <div v-if="error"  class="error-message">
+          {{ errorFields || errorMessage }}
         </div>
         
     </form>

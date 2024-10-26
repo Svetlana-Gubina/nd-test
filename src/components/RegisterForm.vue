@@ -1,7 +1,11 @@
 <script setup>
-import { defineProps, defineEmits, ref } from "vue";
-import {useApi, useAuth} from "../api/auths";
+import { defineEmits, ref, watch } from "vue";
+import {useApi, useAuth} from "@/api/auth";
 import LoadingView from "./LoadingView.vue";
+// import {  string } from "yup";
+
+// to import everything from yup
+import * as Yup from "yup";
 
 const emit = defineEmits(["go-to-login"]);
 
@@ -11,28 +15,72 @@ const {
       post,
       data,
       errorMessage,
-      errorDetails,
       errorFields,
-    } = useApi('/auth/reg');
+    } = useApi('/reg');
 
 const { setUser } = useAuth()
 
-const formData = {
+const formData = ref({
     email: '',
     password: '',
-    passwordRepeat: ''
-}
+    passwordConfirm: ''
+});
 
-const onSubmitRegisterForm = () => {
-  post(formData).then(() => {
-    
-    setUser(data.value, true)
-    
-  });
-}
+
+const errors = ref({
+    email: '',
+    password: '',
+    passwordConfirm: ''
+})
+
+ const schema = Yup.object().shape({
+  email: Yup.string().required("Введите email").email("Необходим корректный email"),
+    password: Yup.string().required("Введите пароль"),
+    passwordConfirm: Yup.string().required("Повторите пароль").oneOf([Yup.ref('password'), null], 'Пароли не совпадают'),
+ });
 
 const onLoginLinkClick = () => {
     emit("go-to-login");
+}
+
+const validate = (field) => {
+  schema.validateAt(field, formData.value)
+        .then(() => {
+          errors.value[field] = "";
+        })
+        .catch(err => {
+          errors.value[field] = err.message;
+        });
+}
+
+const onSubmitRegisterForm = async () => {
+  const request = {
+  email: formData.value.email,
+  password: formData.value.password,
+  confirm_password: formData.value.passwordRepeat
+};
+schema.validate(formData.value, { abortEarly: false })
+        .then(() => {
+          errors.value = {};
+
+          post(request).then(() => {
+            setUser(data.value, true)
+
+            alert("Success")
+
+            setTimeout(() => {
+              emit("go-to-login");
+            }, 1000);
+          });
+        })
+        .catch(err => {
+          err.inner.forEach(error => {
+            errors.value[error.path] = error.message;
+            console.log('errors: ', errors.value)
+          });
+        });
+  
+  
 }
 
 </script>
@@ -42,21 +90,35 @@ const onLoginLinkClick = () => {
   <div class="form-wrapper">
     <h2>Регистрация</h2>
     
-    <form class="form" method="POST" @submit.prevent="onSubmitRegisterForm">
+    <form class="form" method="POST" @submit.prevent="onSubmitRegisterForm" novalidate :validation-schema="schema">
       <label for="email">Email</label>
-        <input type="email" id="email" v-model="formData.email" placeholder="Введите значение" required/>
+        <input type="email" id="email" v-model="formData.email" placeholder="Введите значение" @blur="validate('email')" />
+        <p class="error-message" v-if="!!errors.email">
+          {{ errors.email }}
+        </p>
 
         <label for="password">Пароль</label>
-        <input type="password" id="password" v-model="formData.password" placeholder="Введите пароль" required/>
+        <input type="password" id="password" v-model="formData.password" placeholder="Введите пароль" @blur="validate('password')"  />
+        <p class="error-message" v-if="!!errors.password">
+          {{ errors.password }}
+        </p>
 
-        <label for="password">Пароль ещё раз</label>
-        <input type="password" id="password" v-model="formData.passwordRepeat" placeholder="Ввод|" required/>
+
+        <label for="passwordConfirm">Пароль ещё раз</label>
+        <input type="password" id="passwordConfirm" v-model="formData.passwordConfirm" placeholder="Ввод|" @blur="validate('passwordConfirm')" />
+        <p class="error-message" v-if="!!errors.passwordConfirm">
+          {{ errors.passwordConfirm }}
+        </p>
         
 
         <div class="form__footer">
           <p class="account">У вас есть аккаунт? <a href="#" @click.prevent="onLoginLinkClick">Войдите</a></p>
 
         <button type="submit">Зарегистрироваться</button>
+        </div>
+
+        <div v-if="error"  class="error-message">
+          {{ errorFields || errorMessage }}
         </div>
 
     </form>
@@ -125,7 +187,16 @@ const onLoginLinkClick = () => {
   padding: 5px 24px;
   border-radius: 32px;
 }
-
+.error-message {
+  color: #FF7461;
+  font-size: var(--font-small);
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.5;
+  padding: 8px 20px;
+  border-radius: 24px;
+  background: rgba(255, 116, 97, 0.10);
+}
 
 @media (max-width: 360px) {
   .form-wrapper h2 {
@@ -135,7 +206,8 @@ const onLoginLinkClick = () => {
     line-height: 1.1;
 }
 
-.no-account {
+.account,
+.error-message {
   font-size: 14px;
   font-style: normal;
   font-weight: 400;

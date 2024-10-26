@@ -47,13 +47,13 @@ const onLogginOut = () => {
 </script>
 
 <template>
-  <ModalComponent :isOpen="isModalLoginOpened" @modal-close="closeLoginModal" @submit="submitHandler" name="login-modal">
+  <ModalComponent :isOpen="isModalLoginOpened" @modal-close="closeLoginModal" name="login-modal">
     <template #content>
       <LoginForm @go-to-register="onGoToRegister" />
     </template>
   </ModalComponent>
 
-  <ModalComponent :isOpen="isRegisterModalOpen" @modal-close="closeRegisterModal" @submit="submitHandler" name="register-modal">
+  <ModalComponent :isOpen="isRegisterModalOpen" @modal-close="closeRegisterModal"name="register-modal">
     <template #content>
       <RegisterForm @go-to-login="onGoToLogin"/>
     </template>
