@@ -53,6 +53,7 @@ body {
   font-weight: 400;
   color: var(--white);
   background-color: var(--bg-dark);
+  
 }
 
 h1 {
@@ -101,6 +102,7 @@ button:disabled {
   width: 100%;
   max-width: 100%;
   margin: 0 auto;
+  min-height: 100vh;
 }
 
 .sr-only {

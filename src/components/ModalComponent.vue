@@ -22,11 +22,11 @@ const target = ref(null)
       <div class="modal-wrapper" ref="target">
      
      <div class="modal-container" ref="target">
-       <button class="modal-close" type="button" aria-label="Закрыть модальное окно" @click="closeModal">
-     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-     <path d="M1 1L17 17M17 1L1 17" stroke="white" stroke-width="2" stroke-linecap="round"/>
-   </svg>
-   </button>
+      <button class="modal-close" type="button" aria-label="Закрыть модальное окно" @click="closeModal">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1 1L17 17M17 1L1 17" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
        <slot name="content"></slot>
      </div>
    </div>
@@ -77,8 +77,10 @@ const target = ref(null)
 @media (max-width: 768px) {
     .modal-container {
        width: calc(100% - 40px);
+       margin: 20px auto;
     }
 }
+
 
 @media (max-width: 360px) {
     .modal-container {

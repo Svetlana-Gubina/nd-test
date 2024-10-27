@@ -2,7 +2,20 @@
 import { ref, onMounted } from 'vue'
 import ModalComponent from './ModalComponent.vue';
 import CreateNoteForm from './CreateNoteForm.vue';
-import {useApi, useAuth} from "@/api/auth";
+import NoteCard from './NoteCard.vue';
+import LoadingView from "./LoadingView.vue";
+import {useApi} from "@/api/auth";
+
+
+const {
+       error,
+       loading,
+       get,
+       deleteItem,
+       data,
+       errorMessage,
+       errorFields,
+     } = useApi('/api/notes');
 
 
 const notes = ref([]);
@@ -15,53 +28,79 @@ const openCreateModal = () => {
 const closeCreateModal = () => {
     isModalCreateOpened.value = false;
 };
+
+const onNoteCreate = () => {
+    closeCreateModal();
+    getNotes();
+}
+
+const onNoteRemove = async (noteId) => {
+    await deleteItem(noteId);
+    getNotes();
+}
+
+const getNotes = async () => {
+    await get();
+    notes.value = [...data.value];
+}
+
+onMounted(() => {
+    getNotes();
+})
 </script>
 
 <template>
+    <LoadingView v-if="loading" />
     <ModalComponent :isOpen="isModalCreateOpened" @modal-close="closeCreateModal" name="create-modal">
     <template #content>
-      <CreateNoteForm />
+      <CreateNoteForm @created="onNoteCreate" />
     </template>
   </ModalComponent>
     <section class="notes">
         <h2 class="sr-only">Личный кабинет. Заметки пользователя</h2>
-        <!-- <ul class="notes-list">
-            <li class="notes-item" v-for="note in notes">
-                {{ note }}
+        <ul class="notes-list">
+            <li class="notes-item" v-for="note in notes" :key="note.id">
+                <NoteCard :note="note" @remove="onNoteRemove" />
             </li>
-        </ul> -->
+        </ul>
         <button class="add" type="button" aria-label="Добавить заметки" @click="openCreateModal">
-            <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M1 9H17M9 1L9 17" stroke="white" stroke-width="2" stroke-linecap="round"/>
-            </svg>   
+            </svg>
+
         </button>
+
+        <div v-if="error"  class="error-message">
+          {{ errorFields || errorMessage }}
+        </div> 
     </section>
 </template>
 
 <style scoped>
+.notes {
+    width: 100%;
+    max-width: 100%;
+    min-height: calc(100vh - 70px);
+    height: auto;
+    
+}
 .notes-list {
     margin: 0;
     padding: 0;
     list-style: none;
     display: grid;
-    grid-template-columns: repeat(1fr, 3);
+    grid-template-columns: repeat(3, 1fr);
     grid-template-rows: auto;
     gap: 10px;
-    position: relative;
+    
 }
 
-.notes-item {
-    display: flex;
-    flex-direction: column;
-    max-height: 480px;
-    padding: 20px 28px;
-}
+
 
 .add {
     display: flex;
     width: 56px;
     height: 56px;
-    padding: 24px;
     justify-content: center;
     align-items: center;
     border-radius: 50%;
@@ -74,5 +113,12 @@ const closeCreateModal = () => {
 .add svg {
     width: 18px;
     height:18px;
+}
+
+@media (max-width: 1100px) {
+    .notes-list {
+   display: flex;
+   flex-direction: column;
+  }
 }
 </style>

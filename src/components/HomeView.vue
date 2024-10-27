@@ -1,6 +1,4 @@
 <script setup>
-// import { ref } from 'vue'
-
 
 </script>
 
@@ -11,11 +9,8 @@
         <h1>Мои
         заметки</h1>
         <p class="subtitle">Не забывай о важном, храни его в облаке.</p>
-        
     </div>
-    
   </section>
- 
 </template>
 
 <style scoped>
@@ -76,7 +71,7 @@
     align-items:center;
     text-align: center;
     min-height: 1000px;
-    background-size: 50% 65%;
+    background-size: 100% 65%;
     background-position: 50% 80%;
   }
 

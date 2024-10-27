@@ -8,7 +8,6 @@ import ShowHidePasswordBtn from "./ShowHidePasswordBtn.vue";
 import * as Yup from "yup";
 
 const emit = defineEmits(["go-to-login"]);
-const isLoading = ref(false);
 
 const isPasswordShown = ref(false);
 const passwordType = ref("password");
@@ -44,14 +43,14 @@ watch(
 )
 
 
-// const {
-//       error,
-//       loading,
-//       post,
-//       data,
-//       errorMessage,
-//       errorFields,
-//     } = useApi('/reg');
+const {
+       error,
+       loading,
+       post,
+       data,
+       errorMessage,
+       errorFields,
+     } = useApi('/api/reg');
 
 const { setUser } = useAuth()
 
@@ -70,8 +69,8 @@ const errors = ref({
 
  const schema = Yup.object().shape({
   email: Yup.string().required("Введите email").email("Необходим корректный email"),
-    password: Yup.string().required("Введите пароль"),
-    passwordConfirm: Yup.string().required("Повторите пароль").oneOf([Yup.ref('password'), null], 'Пароли не совпадают'),
+    password: Yup.string().required("Введите пароль").min(4, "Пароль должен включать не меньше 4х символов"),
+    passwordConfirm: Yup.string().required("Повторите пароль").min(4, "Пароль должен включать не меньше 4х символов").oneOf([Yup.ref('password'), null], 'Пароли не совпадают'),
  });
 
 const onLoginLinkClick = () => {
@@ -89,47 +88,32 @@ const validate = (field) => {
 }
 
 const onSubmitRegisterForm = async () => {
-//   const request = {
-//   email: formData.value.email,
-//   password: formData.value.password,
-//   confirm_password: formData.value.passwordRepeat
-// };
+  const request = {
+   email: formData.value.email,
+   password: formData.value.password,
+   confirm_password: formData.value.passwordConfirm
+ };
 schema.validate(formData.value, { abortEarly: false })
         .then(() => {
           errors.value = {};
-
+          return post(request);
+        })
+        .then(() => {
+          setUser(data.value)
           alert("Success")
-          isLoading.value = true;
-          setTimeout(() => {
-            isLoading.value = false;
-            emit("go-to-login");
-          }, 1000);
-
-          // post(request).then(() => {
-          //   setUser(data.value)
-
-          //   alert("Success")
-
-          //   setTimeout(() => {
-          //     emit("go-to-login");
-          //   }, 1000);
-          // });
+          emit("go-to-login");
         })
         .catch(err => {
-          console.log("err",err)
           err.inner.forEach(error => {
             errors.value[error.path] = error.message;
-            console.log('errors: ', errors.value)
           });
         });
-  
-  
 }
 
 </script>
 
 <template>
-  <LoadingView v-if="isLoading" />
+  <LoadingView v-if="loading" />
   <div class="form-wrapper">
     <h2>Регистрация</h2>
     
@@ -168,9 +152,9 @@ schema.validate(formData.value, { abortEarly: false })
         <button type="submit">Зарегистрироваться</button>
         </div>
 
-        <!-- <div v-if="error"  class="error-message">
+        <div v-if="error"  class="error-message">
           {{ errorFields || errorMessage }}
-        </div> -->
+        </div> 
 
     </form>
   </div>
@@ -204,6 +188,7 @@ schema.validate(formData.value, { abortEarly: false })
   line-height: 1.5;
   color: var(--gray);
   margin-left: 16px;
+  margin-bottom: 8px;
 }
 
 .form input {
@@ -256,7 +241,7 @@ schema.validate(formData.value, { abortEarly: false })
   position: relative;
 }
 
-@media (max-width: 360px) {
+@media (max-width: 430px) {
   .form-wrapper h2 {
     font-size: 32px;
     font-style: normal;

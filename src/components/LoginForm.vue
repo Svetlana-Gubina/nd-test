@@ -4,15 +4,12 @@ import { useRouter } from 'vue-router';
 import {useApi, useAuth} from "@/api/auth";
 import LoadingView from "./LoadingView.vue";
 import ShowHidePasswordBtn from "./ShowHidePasswordBtn.vue";
-import { inject } from 'vue'
 
 import * as Yup from "yup";
 
 const emit = defineEmits(["go-to-register", "success"]);
 const isPasswordShown = ref(false);
 const passwordType = ref("password");
-const isLoading = ref(false);
-const { updateIsAuthorized } = inject('auth')
 
 const toggleIsPasswordShown = () => {
   isPasswordShown.value = !isPasswordShown.value;
@@ -29,19 +26,16 @@ watch(
   }
 )
 
-// const {
-//   loading,
-//   data,
-//   error,
-//   post,
-//   errorMessage,
-//   errorFields
-// } = useApi("/auth")
+const {
+   loading,
+   data,
+   error,
+   post,
+  //  errorMessage,
+  //  errorFields
+  } = useApi("/api/auth")
 
-// Authentication details
 const { setUser } = useAuth();
-
-// Router instance
 const router = useRouter();
 
 const user = ref({
@@ -71,33 +65,22 @@ const schema = Yup.object().shape({
 }
 
 const onLoginFormSubmit = () => {
-//   const request = {
-//   email: user.value.email,
-//   password: user.value.password,
-// };
+  const request = {
+     email: user.value.email,
+     password: user.value.password,
+  };
 
-schema.validate(user.value, { abortEarly: false })
+  schema.validate(user.value, { abortEarly: false })
         .then(() => {
           errors.value = {};
-          isLoading.value = true;
-          setTimeout(() => {
-            isLoading.value = false;
-            setUser();
-            updateIsAuthorized(true);
-            router.push({ name: "Notes" });
-            emit("success")
-          }, 1000);
-          
-          // post(request).then(() => {
-          // // If successful, update the Auth state
-          // setUser(data.value);
-
-          // // Redirect to the home page
-          // router.push({ name: "Notes" });
-          // });
+          return post(request)
+        })
+        .then(() => {
+          setUser(data.value);
+          router.push({ name: "Notes" });
+          emit("success")
         })
         .catch(err => {
-         
           err.inner.forEach(error => {
             errors.value[error.path] = error.message;
             console.log('errors: ', errors.value)
@@ -113,7 +96,7 @@ const onRegisterLinkClick = () => {
 </script>
 
 <template>
-  <LoadingView v-if="isLoading" />
+  <LoadingView v-if="loading" />
   <div class="form-wrapper">
     <h2>Вход в ваш аккаунт</h2>
     
@@ -140,9 +123,9 @@ const onRegisterLinkClick = () => {
         <button type="submit">Войти</button>
         </div>
 
-        <!-- <div v-if="error"  class="error-message">
-          {{ errorFields || errorMessage }}
-        </div> -->
+        <div v-if="error"  class="error-message">
+          Комбинация логин/пароль не найдена
+        </div> 
         
     </form>
   </div>
@@ -176,6 +159,7 @@ const onRegisterLinkClick = () => {
   line-height: 1.5;
   color: var(--gray);
   margin-left: 16px;
+  margin-bottom: 8px;
 }
 
 .form input {
@@ -226,15 +210,22 @@ const onRegisterLinkClick = () => {
   margin: 0;
   padding: 0;
   position: relative;
-  
 }
 
-@media (max-width: 360px) {
+@media (max-width: 430px) {
   .form-wrapper h2 {
     font-size: 32px;
     font-style: normal;
     font-weight: 600;
     line-height: 1.1;
+}
+
+.form input {
+  margin-bottom: 16px;
+}
+
+.form input:last-of-type {
+  margin-bottom: 28px;
 }
 
 .no-account,

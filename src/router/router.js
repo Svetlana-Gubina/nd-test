@@ -1,33 +1,37 @@
-import { createWebHistory, createRouter } from 'vue-router';
+import { createWebHistory, createRouter } from "vue-router";
+import { AUTH_KEY } from "@/api/auth";
 
 const router = createRouter({
   routes: [
     {
-      path: '/',
-      name: 'Home',
-      component: () => import('@/components/HomeView.vue'),
+      path: "/",
+      name: "Home",
+      component: () => import("@/components/HomeView.vue"),
     },
     {
-      path: '/notes',
-      name: 'Notes',
-      component: () => import('@/components/NotesView.vue'),
+      path: "/notes",
+      name: "Notes",
+      component: () => import("@/components/NotesView.vue"),
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
-      path: '/:pathMatch(.*)*',
-      name: 'Not found',
-      component: () => import('@/components/PageNotFoundView.vue'),
+      path: "/:pathMatch(.*)*",
+      name: "Not found",
+      component: () => import("@/components/PageNotFoundView.vue"),
     },
   ],
-  history: createWebHistory('/'),
+  history: createWebHistory("/"),
 });
 
 router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth) {
-    const token = localStorage.getItem('user');
+    const token = localStorage.getItem(AUTH_KEY);
     if (token) {
       next();
     } else {
-      next('/');
+      next("/");
     }
   } else {
     next();

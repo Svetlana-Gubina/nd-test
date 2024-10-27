@@ -1,7 +1,5 @@
 <script setup>
-import { ref } from 'vue'
 
-const notes = ref([]);
 </script>
 
 <template>

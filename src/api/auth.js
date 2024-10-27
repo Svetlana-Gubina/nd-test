@@ -1,27 +1,26 @@
-import { ref, computed } from 'vue';
-import axios from 'axios';
+import { ref, computed } from "vue";
+import axios from "axios";
 
-const basePath = 'https://dist.nd.ru/';
-const AUTH_KEY = 'user';
-const AUTH_TOKEN = '"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"';
+const basePath = "https://dist.nd.ru/";
+export const AUTH_KEY = "user";
 
 export const api = axios.create({
   baseURL: basePath,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
-axios.interceptors.request.use(
+api.interceptors.request.use(
   (config) => {
-    config.headers['Authorization'] = `Bearer ${localStorage.getItem(
-      AUTH_KEY
+    config.headers["Authorization"] = `Bearer ${localStorage.getItem(
+      AUTH_KEY,
     )}`;
     return config;
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 export const useApi = (endpoint) => {
@@ -38,7 +37,7 @@ export const useApi = (endpoint) => {
   const errorFields = computed(() => {
     if (error.value && Array.isArray(error.value.message)) {
       return error.value.message.reduce((acc, msg) => {
-        let [field] = msg.split(' ');
+        let [field] = msg.split(" ");
 
         if (!acc[field]) {
           acc[field] = [];
@@ -77,6 +76,19 @@ export const useApi = (endpoint) => {
       .finally(() => (loading.value = false));
   };
 
+  const deleteItem = (id) => {
+    loading.value = true;
+    error.value = undefined;
+    return api
+      .delete(`${endpoint}/${id}`)
+      .then((res) => console.log(res))
+      .catch((e) => {
+        error.value = e;
+        throw e;
+      })
+      .finally(() => (loading.value = false));
+  };
+
   return {
     loading,
     data,
@@ -85,13 +97,13 @@ export const useApi = (endpoint) => {
     errorFields,
     get,
     post,
+    deleteItem,
   };
 };
 
 export const useAuth = () => {
   const setUser = (payload) => {
-    // window.localStorage.setItem(AUTH_KEY, payload[AUTH_TOKEN]);
-    window.localStorage.setItem(AUTH_KEY, AUTH_TOKEN);
+    window.localStorage.setItem(AUTH_KEY, payload["accessToken"]);
   };
 
   const logout = () => {

@@ -1,5 +1,4 @@
 <script setup>
-// import { ref } from 'vue'
 const props = defineProps({
     text: String
 })
@@ -16,6 +15,7 @@ const props = defineProps({
 <style scoped>
 .title {
     position: absolute;
+    z-index: 3000;
     right: 0;
     bottom: -200%;
     width: auto;
@@ -28,13 +28,14 @@ const props = defineProps({
     font-size: var(--font-small);
     line-height: 1.1;
     color: var(--green-light);
-    box-shadow: 0 0 20px 5px black;
+    box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0.40);
     display: none;
 }
 
 .title::after {
   content: "";
   position: absolute;
+  z-index: 3000;
   top: -5px;
   left: 75%;
   width: 0; 

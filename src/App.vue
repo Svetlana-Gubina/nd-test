@@ -19,7 +19,8 @@ import MainHeader from './components/MainHeader.vue'
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: calc(100vh - 70px);
+  position: relative;
+  height: auto;
 }
 
 @media (max-width: 1366px) {
