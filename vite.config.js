@@ -5,6 +5,7 @@ import { resolve } from "node:path";
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: "/nd-test/",
   plugins: [
     ViteSvgSpriteWrapper({
       outputDir: "public",
