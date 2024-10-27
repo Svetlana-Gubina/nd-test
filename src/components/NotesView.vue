@@ -111,9 +111,10 @@ onMounted(() => {
   align-items: center;
   border-radius: 50%;
   box-shadow: 0px 15px 46px -10px rgba(0, 0, 0, 0.6);
-  position: absolute;
-  bottom: 200px;
+  position: fixed;
+  bottom: 20px;
   right: 20px;
+  z-index: 1000;
 }
 
 .add svg {
@@ -121,17 +122,7 @@ onMounted(() => {
   height: 18px;
 }
 
-@media (max-width: 1366px) {
-  .add {
-    bottom: 120px;
-  }
-}
 
-@media (max-width: 1200px) {
-  .add {
-    bottom: 120px;
-  }
-}
 
 @media (max-width: 900px) {
   .notes-list {
@@ -140,15 +131,4 @@ onMounted(() => {
   }
 }
 
-@media (max-width: 768px) {
-  .add {
-    bottom: 55px;
-  }
-}
-
-@media (max-width: 430px) {
-  .add {
-    bottom: 0;
-  }
-}
 </style>

@@ -91,7 +91,8 @@ onMounted(async () => {
 
   <header class="header">
     <div class="logo">
-      <svg
+      <router-link to="/nd-test">
+        <svg
         width="219"
         height="50"
         viewBox="0 0 219 50"
@@ -145,10 +146,12 @@ onMounted(async () => {
           fill="#B1C909"
         />
       </svg>
+      </router-link>
     </div>
     <div class="user-navigation">
       <div v-if="userInfo" class="user-navigation__info">
-        <p class="user-navigation__email">{{ userInfo.email }}</p>
+        <!-- <p class="user-navigation__email">{{ userInfo.email }}</p> -->
+        <router-link class="user-navigation__email" to="/notes">{{ userInfo.email }}</router-link>
         <button @click="onLogginOut" class="user-navigation__btn">
           <svg
             width="22"
@@ -231,6 +234,11 @@ onMounted(async () => {
   font-weight: 400;
   font-style: normal;
   line-height: 1.5;
+  color: var(--white);
+}
+
+.user-navigation__email:hover  {
+  color: var(--gray);
 }
 
 .user-navigation__btn {
