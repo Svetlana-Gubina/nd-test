@@ -2,21 +2,56 @@
 import { defineEmits, ref, watch } from "vue";
 import {useApi, useAuth} from "@/api/auth";
 import LoadingView from "./LoadingView.vue";
-// import {  string } from "yup";
+import ShowHidePasswordBtn from "./ShowHidePasswordBtn.vue";
 
 // to import everything from yup
 import * as Yup from "yup";
 
 const emit = defineEmits(["go-to-login"]);
+const isLoading = ref(false);
 
-const {
-      error,
-      loading,
-      post,
-      data,
-      errorMessage,
-      errorFields,
-    } = useApi('/reg');
+const isPasswordShown = ref(false);
+const passwordType = ref("password");
+const isPasswordConfirmShown = ref(false);
+const passwordConfirmType = ref("password");
+
+const toggleIsPasswordShown = () => {
+  isPasswordShown.value = !isPasswordShown.value;
+}
+const toggleIsPasswordConfirmShown = () => {
+  isPasswordConfirmShown.value = !isPasswordConfirmShown.value;
+}
+
+watch(
+  () => isPasswordShown.value,
+  () => {
+    if(isPasswordShown.value) {
+      passwordType.value = "text";
+    } else {
+      passwordType.value = "password";
+    }
+  }
+)
+watch(
+  () => isPasswordConfirmShown.value,
+  () => {
+    if(isPasswordConfirmShown.value) {
+      passwordConfirmType.value = "text";
+    } else {
+      passwordConfirmType.value = "password";
+    }
+  }
+)
+
+
+// const {
+//       error,
+//       loading,
+//       post,
+//       data,
+//       errorMessage,
+//       errorFields,
+//     } = useApi('/reg');
 
 const { setUser } = useAuth()
 
@@ -54,26 +89,34 @@ const validate = (field) => {
 }
 
 const onSubmitRegisterForm = async () => {
-  const request = {
-  email: formData.value.email,
-  password: formData.value.password,
-  confirm_password: formData.value.passwordRepeat
-};
+//   const request = {
+//   email: formData.value.email,
+//   password: formData.value.password,
+//   confirm_password: formData.value.passwordRepeat
+// };
 schema.validate(formData.value, { abortEarly: false })
         .then(() => {
           errors.value = {};
 
-          post(request).then(() => {
-            setUser(data.value, true)
+          alert("Success")
+          isLoading.value = true;
+          setTimeout(() => {
+            isLoading.value = false;
+            emit("go-to-login");
+          }, 1000);
 
-            alert("Success")
+          // post(request).then(() => {
+          //   setUser(data.value)
 
-            setTimeout(() => {
-              emit("go-to-login");
-            }, 1000);
-          });
+          //   alert("Success")
+
+          //   setTimeout(() => {
+          //     emit("go-to-login");
+          //   }, 1000);
+          // });
         })
         .catch(err => {
+          console.log("err",err)
           err.inner.forEach(error => {
             errors.value[error.path] = error.message;
             console.log('errors: ', errors.value)
@@ -86,7 +129,7 @@ schema.validate(formData.value, { abortEarly: false })
 </script>
 
 <template>
-  <LoadingView v-if="loading" />
+  <LoadingView v-if="isLoading" />
   <div class="form-wrapper">
     <h2>Регистрация</h2>
     
@@ -98,14 +141,22 @@ schema.validate(formData.value, { abortEarly: false })
         </p>
 
         <label for="password">Пароль</label>
-        <input type="password" id="password" v-model="formData.password" placeholder="Введите пароль" @blur="validate('password')"  />
+        <div class="password-wrapper">
+          <input :type="passwordType" id="password" v-model="formData.password" placeholder="Введите пароль" @blur="validate('password')"  />
+          <ShowHidePasswordBtn :isShown="isPasswordShown" @toggleIsShown="toggleIsPasswordShown" /> 
+        </div>
+        
         <p class="error-message" v-if="!!errors.password">
           {{ errors.password }}
         </p>
 
 
         <label for="passwordConfirm">Пароль ещё раз</label>
-        <input type="password" id="passwordConfirm" v-model="formData.passwordConfirm" placeholder="Ввод|" @blur="validate('passwordConfirm')" />
+        <div class="password-wrapper">
+          <input :type="passwordConfirmType" id="passwordConfirm" v-model="formData.passwordConfirm" placeholder="Ввод|" @blur="validate('passwordConfirm')" />
+          <ShowHidePasswordBtn :isShown="isPasswordConfirmShown" @toggleIsShown="toggleIsPasswordConfirmShown" /> 
+        </div>
+        
         <p class="error-message" v-if="!!errors.passwordConfirm">
           {{ errors.passwordConfirm }}
         </p>
@@ -117,9 +168,9 @@ schema.validate(formData.value, { abortEarly: false })
         <button type="submit">Зарегистрироваться</button>
         </div>
 
-        <div v-if="error"  class="error-message">
+        <!-- <div v-if="error"  class="error-message">
           {{ errorFields || errorMessage }}
-        </div>
+        </div> -->
 
     </form>
   </div>
@@ -161,7 +212,8 @@ schema.validate(formData.value, { abortEarly: false })
   background: var(--white);
   padding:  16px;
   margin-bottom: 24px;
-
+  width: 100%;
+  max-width: 100%;
 }
 
 .form input:last-of-type {
@@ -196,6 +248,12 @@ schema.validate(formData.value, { abortEarly: false })
   padding: 8px 20px;
   border-radius: 24px;
   background: rgba(255, 116, 97, 0.10);
+}
+
+.password-wrapper {
+  margin: 0;
+  padding: 0;
+  position: relative;
 }
 
 @media (max-width: 360px) {

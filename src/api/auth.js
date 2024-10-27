@@ -3,21 +3,26 @@ import axios from 'axios';
 
 const basePath = 'https://dist.nd.ru/';
 const AUTH_KEY = 'user';
-const AUTH_TOKEN = '';
+const AUTH_TOKEN = '"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"';
 
 export const api = axios.create({
   baseURL: basePath,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
-export const authHeader = () => {
-  let user = JSON.parse(localStorage.getItem('user'));
-
-  if (user && user.accessToken) {
-    return { Authorization: 'Bearer ' + user.accessToken };
-  } else {
-    return {};
+axios.interceptors.request.use(
+  (config) => {
+    config.headers['Authorization'] = `Bearer ${localStorage.getItem(
+      AUTH_KEY
+    )}`;
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-};
+);
 
 export const useApi = (endpoint) => {
   const loading = ref(false);
@@ -46,13 +51,11 @@ export const useApi = (endpoint) => {
     }
   });
 
-  const headers = authHeader();
-
   const get = () => {
     loading.value = true;
     error.value = undefined;
     return api
-      .get(endpoint, headers)
+      .get(endpoint)
       .then((res) => (data.value = res.data))
       .catch((e) => {
         error.value = e;
@@ -65,7 +68,7 @@ export const useApi = (endpoint) => {
     loading.value = true;
     error.value = undefined;
     return api
-      .post(endpoint, payload, headers)
+      .post(endpoint, payload)
       .then((res) => (data.value = res.data))
       .catch((e) => {
         error.value = e;
@@ -87,12 +90,13 @@ export const useApi = (endpoint) => {
 
 export const useAuth = () => {
   const setUser = (payload) => {
-    window.localStorage.setItem(AUTH_KEY, payload[AUTH_TOKEN]);
+    // window.localStorage.setItem(AUTH_KEY, payload[AUTH_TOKEN]);
+    window.localStorage.setItem(AUTH_KEY, AUTH_TOKEN);
   };
 
   const logout = () => {
     window.localStorage.removeItem(AUTH_KEY);
-    //   return Promise.resolve()
+    return Promise.resolve();
   };
 
   return {

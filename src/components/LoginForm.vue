@@ -1,21 +1,42 @@
 <script setup>
-import { defineProps, defineEmits, ref } from "vue";
+import { defineEmits, ref, watch } from "vue";
 import { useRouter } from 'vue-router';
 import {useApi, useAuth} from "@/api/auth";
+import LoadingView from "./LoadingView.vue";
+import ShowHidePasswordBtn from "./ShowHidePasswordBtn.vue";
+import { inject } from 'vue'
 
 import * as Yup from "yup";
 
-const emit = defineEmits(["go-to-register"]);
-const isError = ref(false);
+const emit = defineEmits(["go-to-register", "success"]);
+const isPasswordShown = ref(false);
+const passwordType = ref("password");
+const isLoading = ref(false);
+const { updateIsAuthorized } = inject('auth')
 
-const {
-  loading,
-  data,
-  error,
-  post,
-  errorMessage,
-  errorFields
-} = useApi("/auth")
+const toggleIsPasswordShown = () => {
+  isPasswordShown.value = !isPasswordShown.value;
+}
+
+watch(
+  () => isPasswordShown.value,
+  () => {
+    if(isPasswordShown.value) {
+      passwordType.value = "text";
+    } else {
+      passwordType.value = "password";
+    }
+  }
+)
+
+// const {
+//   loading,
+//   data,
+//   error,
+//   post,
+//   errorMessage,
+//   errorFields
+// } = useApi("/auth")
 
 // Authentication details
 const { setUser } = useAuth();
@@ -50,15 +71,23 @@ const schema = Yup.object().shape({
 }
 
 const onLoginFormSubmit = () => {
-  const request = {
-  email: user.value.email,
-  password: user.value.password,
-};
+//   const request = {
+//   email: user.value.email,
+//   password: user.value.password,
+// };
 
 schema.validate(user.value, { abortEarly: false })
         .then(() => {
           errors.value = {};
-          router.push({ name: "Notes" });
+          isLoading.value = true;
+          setTimeout(() => {
+            isLoading.value = false;
+            setUser();
+            updateIsAuthorized(true);
+            router.push({ name: "Notes" });
+            emit("success")
+          }, 1000);
+          
           // post(request).then(() => {
           // // If successful, update the Auth state
           // setUser(data.value);
@@ -68,6 +97,7 @@ schema.validate(user.value, { abortEarly: false })
           // });
         })
         .catch(err => {
+         
           err.inner.forEach(error => {
             errors.value[error.path] = error.message;
             console.log('errors: ', errors.value)
@@ -83,6 +113,7 @@ const onRegisterLinkClick = () => {
 </script>
 
 <template>
+  <LoadingView v-if="isLoading" />
   <div class="form-wrapper">
     <h2>Вход в ваш аккаунт</h2>
     
@@ -93,8 +124,12 @@ const onRegisterLinkClick = () => {
           {{ errors.email }}
         </p>
 
+        
         <label for="password">Пароль</label>
-        <input type="password" id="password" v-model="user.password" placeholder="Введите пароль" @blur="validate('password')"/>
+        <div class="password-wrapper">
+          <input :type="passwordType" id="password" v-model="user.password" placeholder="Введите пароль" @blur="validate('password')"/>
+         <ShowHidePasswordBtn :isShown="isPasswordShown" @toggleIsShown="toggleIsPasswordShown" /> 
+        </div>
         <p class="error-message" v-if="!!errors.password">
           {{ errors.password }}
         </p>
@@ -105,9 +140,9 @@ const onRegisterLinkClick = () => {
         <button type="submit">Войти</button>
         </div>
 
-        <div v-if="error"  class="error-message">
+        <!-- <div v-if="error"  class="error-message">
           {{ errorFields || errorMessage }}
-        </div>
+        </div> -->
         
     </form>
   </div>
@@ -144,6 +179,8 @@ const onRegisterLinkClick = () => {
 }
 
 .form input {
+  width: 100%;
+  max-width: 100%;
   font-family: inherit;
   border-radius: 36px;
   background: var(--white);
@@ -184,6 +221,12 @@ const onRegisterLinkClick = () => {
   padding: 8px 20px;
   border-radius: 24px;
   background: rgba(255, 116, 97, 0.10);
+}
+.password-wrapper {
+  margin: 0;
+  padding: 0;
+  position: relative;
+  
 }
 
 @media (max-width: 360px) {

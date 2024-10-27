@@ -11,7 +11,7 @@
         <h1>Мои
         заметки</h1>
         <p class="subtitle">Не забывай о важном, храни его в облаке.</p>
-        <router-link to="/notes">Notes</router-link>
+        
     </div>
     
   </section>
@@ -27,8 +27,8 @@
     align-items:center;
     text-align: left;
     background-image: image-set(
-    url("/public/images/group-1@.png") 1x,
-    url("/public/images/group-1@2x.png") 2x);
+    url("/images/group-1@.png") 1x,
+    url("/images/group-1@2x.png") 2x);
     background-size: 65% 100%;
     background-repeat: no-repeat;
     background-position: 100% 50%;

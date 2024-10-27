@@ -3,10 +3,19 @@ import { ref } from 'vue';
 import ModalComponent from './ModalComponent.vue';
 import LoginForm from './LoginForm.vue';
 import RegisterForm from './RegisterForm.vue';
+import Title from './Title.vue';
 import { useRouter } from "vue-router";
 import {useApi, useAuth} from "@/api/auth";
+import { provide } from 'vue'
 
 const isUserAuthorized = ref(false);
+function updateIsAuthorized(value) {
+  isUserAuthorized.value = value;
+}
+provide('auth', {
+  isUserAuthorized,
+  updateIsAuthorized
+})
 
 const isModalLoginOpened = ref(false);
 const isRegisterModalOpen = ref(false);
@@ -38,18 +47,19 @@ const { logout } = useAuth()
 const router = useRouter()
 
 const onLogginOut = () => {
-  logout().then(() => router.push({ name: 'Home' }))
+  logout().then(() => {
+    router.push({ name: 'Home' })
+    updateIsAuthorized(false);
+  })
 }
-// const submitHandler = ()=>{
-//   //here you do whatever
-// }
+
 
 </script>
 
 <template>
   <ModalComponent :isOpen="isModalLoginOpened" @modal-close="closeLoginModal" name="login-modal">
     <template #content>
-      <LoginForm @go-to-register="onGoToRegister" />
+      <LoginForm @go-to-register="onGoToRegister" @success="closeLoginModal" />
     </template>
   </ModalComponent>
 
@@ -84,6 +94,7 @@ const onLogginOut = () => {
           <circle cx="11" cy="6" r="5" stroke="white" stroke-width="2"/>
           <path d="M21 28V20C21 17.7909 19.2091 16 17 16H5C2.79086 16 1 17.7909 1 20V28" stroke="white" stroke-width="2"/>
           </svg>
+         <Title text="Выйти"/>
         </button>
       </div>
       <button v-else class="login-btn" type="button" @click="openLoginModal">
@@ -143,8 +154,17 @@ const onLogginOut = () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 20px;
-  height: 20px;
+  width: 56px;
+  height: 56px;
+  position: relative;
+}
+
+.user-navigation__btn:hover {
+  background-color: var(--gray);
+}
+
+.user-navigation__btn:hover:deep(.title) {
+  display: flex;
 }
 
 
@@ -188,11 +208,9 @@ fill: var(--white);
   .header {
   padding: 20px 40px;
 }
-
 }
 
 @media (max-width: 767px) {
- 
 .logo {
   width: 154px;
   height: 36px;
@@ -201,7 +219,6 @@ fill: var(--white);
 .logo svg {
   width: 154px;
   height: 36px;
-  
 }
 }
 

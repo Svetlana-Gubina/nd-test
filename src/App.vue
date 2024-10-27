@@ -19,7 +19,7 @@ import MainHeader from './components/MainHeader.vue'
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 100%;
+  height: calc(100vh - 70px);
 }
 
 @media (max-width: 1366px) {
@@ -33,6 +33,7 @@ import MainHeader from './components/MainHeader.vue'
     padding: 40px;
     flex-direction: column;
     align-items:center;
+    height: calc(100vh - 50px);
   }
 }
 
