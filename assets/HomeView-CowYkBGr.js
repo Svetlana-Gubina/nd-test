@@ -1,0 +1,1 @@
+import{_ as s,c as a,a as e,o as c}from"./index-Bx_XHH8Z.js";const o={},n={class:"main-title"};function _(i,t){return c(),a("section",n,t[0]||(t[0]=[e("div",{class:"main-title__text"},[e("h1",null,"Мои заметки"),e("p",{class:"subtitle"},"Не забывай о важном, храни его в облаке.")],-1)]))}const r=s(o,[["render",_],["__scopeId","data-v-11e5fc4b"]]);export{r as default};
