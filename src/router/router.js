@@ -4,7 +4,7 @@ import { AUTH_KEY } from "@/api/auth";
 const router = createRouter({
   routes: [
     {
-      path: "/",
+      path: "/nd-test",
       name: "Home",
       component: () => import("@/components/HomeView.vue"),
     },
