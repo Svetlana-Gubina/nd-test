@@ -1,0 +1,1 @@
+import{_ as t,c as s,a,k as n,l as r,n as c,o as d,i as _}from"./index-BTwvWLPc.js";const l={},i={class:"wrapper"};function p(u,e){const o=c("router-link");return d(),s("div",i,[e[1]||(e[1]=a("h2",null,"Страница не найдена",-1)),n(o,{to:"/"},{default:r(()=>e[0]||(e[0]=[_("На главную")])),_:1})])}const m=t(l,[["render",p],["__scopeId","data-v-6db6c8a5"]]);export{m as default};
