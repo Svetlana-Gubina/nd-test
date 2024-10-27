@@ -1,18 +1,16 @@
 :root {
-  --bg-dark: #0A1F38;
-  --bg-dark-middle:#1B2F46;
-  --bg-dark-light: #2F4056;
-  --gray: #9DA5AF;
-  
+  --bg-dark: #0a1f38;
+  --bg-dark-middle: #1b2f46;
+  --bg-dark-light: #2f4056;
+  --gray: #9da5af;
+
   --green-dark: #819400;
-  --green-middle: #97AB0D;
-  --green: #A5BB0C;
-  --green-light: #B1C909;
-  --white:#FFFFFF;
+  --green-middle: #97ab0d;
+  --green: #a5bb0c;
+  --green-light: #b1c909;
+  --white: #ffffff;
 
   --font-small: 18px;
-
- 
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -20,7 +18,9 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -53,7 +53,6 @@ body {
   font-weight: 400;
   color: var(--white);
   background-color: var(--bg-dark);
-  
 }
 
 h1 {
@@ -81,7 +80,7 @@ button {
   font-size: 20px;
   font-style: normal;
   font-weight: 500;
-  line-height: 1.6
+  line-height: 1.6;
 }
 button:hover {
   background-color: var(--green);
@@ -97,7 +96,6 @@ button:disabled {
   background-color: var(--gray);
 }
 
-
 #app {
   width: 100%;
   max-width: 100%;
@@ -106,15 +104,15 @@ button:disabled {
 }
 
 .sr-only {
-	border: 0 !important;
-	clip: rect(1px, 1px, 1px, 1px) !important; /* 1 */
-	-webkit-clip-path: inset(50%) !important;
-		clip-path: inset(50%) !important;  /* 2 */
-	height: 1px !important;
-	margin: -1px !important;
-	overflow: hidden !important;
-	padding: 0 !important;
-	position: absolute !important;
-	width: 1px !important;
-	white-space: nowrap !important;            /* 3 */
+  border: 0 !important;
+  clip: rect(1px, 1px, 1px, 1px) !important; /* 1 */
+  -webkit-clip-path: inset(50%) !important;
+  clip-path: inset(50%) !important; /* 2 */
+  height: 1px !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  position: absolute !important;
+  width: 1px !important;
+  white-space: nowrap !important; /* 3 */
 }

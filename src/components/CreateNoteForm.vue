@@ -1,98 +1,112 @@
 <script setup>
 import { defineEmits, ref } from "vue";
-import {useApi} from "@/api/auth";
+import { useApi } from "@/api/auth";
 import LoadingView from "./LoadingView.vue";
 
 import * as Yup from "yup";
 
 const emit = defineEmits(["created"]);
 
-const {
-   loading,
-   data,
-   error,
-   post,
-   errorMessage,
-   errorFields
-  } = useApi("/api/notes")
+const { loading, data, error, post, errorMessage, errorFields } =
+  useApi("/api/notes");
 
 const values = ref({
-    name: '',
-    note: ''
-})
+  name: "",
+  note: "",
+});
 
 const errors = ref({
-    name: '',
-    note: ''
-})
+  name: "",
+  note: "",
+});
 
 const schema = Yup.object().shape({
-    name: Yup.string().required("Введите название заметки").max(100, "Название должно включать не больше 100 символов"),
-    note: Yup.string().required("Введите текст заметки").max(255, "Текст должен включать не больше 255 символов"),
- });
+  name: Yup.string()
+    .required("Введите название заметки")
+    .max(100, "Название должно включать не больше 100 символов"),
+  note: Yup.string()
+    .required("Введите текст заметки")
+    .max(255, "Текст должен включать не больше 255 символов"),
+});
 
- const validate = (field) => {
-  schema.validateAt(field, values.value)
-        .then(() => {
-          errors.value[field] = "";
-        })
-        .catch(err => {
-          errors.value[field] = err.message;
-        });
-}
+const validate = (field) => {
+  schema
+    .validateAt(field, values.value)
+    .then(() => {
+      errors.value[field] = "";
+    })
+    .catch((err) => {
+      errors.value[field] = err.message;
+    });
+};
 
 const onAddNote = () => {
   const request = {
     title: values.value.name,
-    content: values.value.note
-  }
-  schema.validate(values.value, { abortEarly: false })
-        .then(() => {
-          errors.value = {};
-          return post(request);
-        })
-        .then(() => {
-          emit("created",data.value)
-        })
-        .catch(err => {    
-          err.inner.forEach(error => {
-            errors.value[error.path] = error.message;
-          });
-        });
-}
-
-
+    content: values.value.note,
+  };
+  schema
+    .validate(values.value, { abortEarly: false })
+    .then(() => {
+      errors.value = {};
+      return post(request);
+    })
+    .then(() => {
+      emit("created", data.value);
+    })
+    .catch((err) => {
+      err.inner.forEach((error) => {
+        errors.value[error.path] = error.message;
+      });
+    });
+};
 </script>
 
 <template>
   <LoadingView v-if="loading" />
   <div class="form-wrapper">
     <h2>Добавление заметки</h2>
-    
-    <form class="form" method="POST" @submit.prevent="onLoginFormSubmit" novalidate :validation-schema="schema">
+
+    <form
+      class="form"
+      method="POST"
+      @submit.prevent="onLoginFormSubmit"
+      novalidate
+      :validation-schema="schema"
+    >
       <label for="name">Название заметки</label>
-        <input type="text" id="name" v-model="values.name" placeholder="Введите название" @blur="validate('name')"/>
-        <span class="limit">0/{{ values.name.length }}</span>
-        <p class="error-message" v-if="!!errors.name">
-          {{ errors.name }}
-        </p>
+      <input
+        type="text"
+        id="name"
+        v-model="values.name"
+        placeholder="Введите название"
+        @blur="validate('name')"
+      />
+      <span class="limit">0/{{ values.name.length }}</span>
+      <p class="error-message" v-if="!!errors.name">
+        {{ errors.name }}
+      </p>
 
-        <label for="note">Текст заметки</label>
-        <textarea id="note" class="textarea" v-model="values.note" @blur="validate('note')" rows="5"></textarea>
-        <span class="limit">0/{{ values.note.length }}</span>
-        <p class="error-message" v-if="!!errors.note">
-          {{ errors.note }}
-        </p>
+      <label for="note">Текст заметки</label>
+      <textarea
+        id="note"
+        class="textarea"
+        v-model="values.note"
+        @blur="validate('note')"
+        rows="5"
+      ></textarea>
+      <span class="limit">0/{{ values.note.length }}</span>
+      <p class="error-message" v-if="!!errors.note">
+        {{ errors.note }}
+      </p>
 
-        <div class="form__footer">
-        
+      <div class="form__footer">
         <button @click="onAddNote" type="submit">Добавить</button>
-        </div>
+      </div>
 
-        <div v-if="error"  class="error-message">
-          {{ errorFields || errorMessage }}
-        </div> 
-        
+      <div v-if="error" class="error-message">
+        {{ errorFields || errorMessage }}
+      </div>
     </form>
   </div>
 </template>
@@ -132,17 +146,15 @@ const onAddNote = () => {
   font-family: inherit;
   border-radius: 36px;
   background: var(--white);
-  padding:  16px;
+  padding: 16px;
 }
-
-
 
 .limit {
   font-size: var(--font-small);
   font-style: normal;
   font-weight: 400;
   line-height: 1.5;
-  color:var(--gray);
+  color: var(--gray);
   margin-left: auto;
   margin-right: 16px;
   margin-bottom: 24px;
@@ -157,7 +169,7 @@ const onAddNote = () => {
   font-family: inherit;
   border-radius: 36px;
   background: var(--white);
-  padding:  16px;
+  padding: 16px;
 }
 
 .form__footer {
@@ -174,14 +186,14 @@ const onAddNote = () => {
 }
 
 .error-message {
-  color: #FF7461;
+  color: #ff7461;
   font-size: var(--font-small);
   font-style: normal;
   font-weight: 400;
   line-height: 1.5;
   padding: 8px 20px;
   border-radius: 24px;
-  background: rgba(255, 116, 97, 0.10);
+  background: rgba(255, 116, 97, 0.1);
 }
 
 @media (max-width: 430px) {
@@ -190,14 +202,14 @@ const onAddNote = () => {
     font-style: normal;
     font-weight: 600;
     line-height: 1.1;
-}
+  }
 
-.no-account,
-.error-message {
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1.6;
+  .no-account,
+  .error-message {
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.6;
   }
 
   .form__footer {

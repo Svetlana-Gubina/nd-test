@@ -1,11 +1,7 @@
-<script setup>
-
-</script>
+<script setup></script>
 
 <template>
-    <div class="loading">
-    Загрузка...
-  </div>
+  <div class="loading">Загрузка...</div>
 </template>
 
 <style scoped>

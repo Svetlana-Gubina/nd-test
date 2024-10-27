@@ -1,6 +1,6 @@
 <script setup>
 import { defineEmits, ref, watch } from "vue";
-import {useApi, useAuth} from "@/api/auth";
+import { useApi, useAuth } from "@/api/auth";
 import LoadingView from "./LoadingView.vue";
 import ShowHidePasswordBtn from "./ShowHidePasswordBtn.vue";
 
@@ -16,146 +16,176 @@ const passwordConfirmType = ref("password");
 
 const toggleIsPasswordShown = () => {
   isPasswordShown.value = !isPasswordShown.value;
-}
+};
 const toggleIsPasswordConfirmShown = () => {
   isPasswordConfirmShown.value = !isPasswordConfirmShown.value;
-}
+};
 
 watch(
   () => isPasswordShown.value,
   () => {
-    if(isPasswordShown.value) {
+    if (isPasswordShown.value) {
       passwordType.value = "text";
     } else {
       passwordType.value = "password";
     }
-  }
-)
+  },
+);
 watch(
   () => isPasswordConfirmShown.value,
   () => {
-    if(isPasswordConfirmShown.value) {
+    if (isPasswordConfirmShown.value) {
       passwordConfirmType.value = "text";
     } else {
       passwordConfirmType.value = "password";
     }
-  }
-)
+  },
+);
 
+const { error, loading, post, data, errorMessage, errorFields } =
+  useApi("/api/reg");
 
-const {
-       error,
-       loading,
-       post,
-       data,
-       errorMessage,
-       errorFields,
-     } = useApi('/api/reg');
-
-const { setUser } = useAuth()
+const { setUser } = useAuth();
 
 const formData = ref({
-    email: '',
-    password: '',
-    passwordConfirm: ''
+  email: "",
+  password: "",
+  passwordConfirm: "",
 });
 
-
 const errors = ref({
-    email: '',
-    password: '',
-    passwordConfirm: ''
-})
+  email: "",
+  password: "",
+  passwordConfirm: "",
+});
 
- const schema = Yup.object().shape({
-  email: Yup.string().required("Введите email").email("Необходим корректный email"),
-    password: Yup.string().required("Введите пароль").min(4, "Пароль должен включать не меньше 4х символов"),
-    passwordConfirm: Yup.string().required("Повторите пароль").min(4, "Пароль должен включать не меньше 4х символов").oneOf([Yup.ref('password'), null], 'Пароли не совпадают'),
- });
+const schema = Yup.object().shape({
+  email: Yup.string()
+    .required("Введите email")
+    .email("Необходим корректный email"),
+  password: Yup.string()
+    .required("Введите пароль")
+    .min(4, "Пароль должен включать не меньше 4х символов"),
+  passwordConfirm: Yup.string()
+    .required("Повторите пароль")
+    .min(4, "Пароль должен включать не меньше 4х символов")
+    .oneOf([Yup.ref("password"), null], "Пароли не совпадают"),
+});
 
 const onLoginLinkClick = () => {
-    emit("go-to-login");
-}
+  emit("go-to-login");
+};
 
 const validate = (field) => {
-  schema.validateAt(field, formData.value)
-        .then(() => {
-          errors.value[field] = "";
-        })
-        .catch(err => {
-          errors.value[field] = err.message;
-        });
-}
+  schema
+    .validateAt(field, formData.value)
+    .then(() => {
+      errors.value[field] = "";
+    })
+    .catch((err) => {
+      errors.value[field] = err.message;
+    });
+};
 
 const onSubmitRegisterForm = async () => {
   const request = {
-   email: formData.value.email,
-   password: formData.value.password,
-   confirm_password: formData.value.passwordConfirm
- };
-schema.validate(formData.value, { abortEarly: false })
-        .then(() => {
-          errors.value = {};
-          return post(request);
-        })
-        .then(() => {
-          setUser(data.value)
-          alert("Success")
-          emit("go-to-login");
-        })
-        .catch(err => {
-          err.inner.forEach(error => {
-            errors.value[error.path] = error.message;
-          });
-        });
-}
-
+    email: formData.value.email,
+    password: formData.value.password,
+    confirm_password: formData.value.passwordConfirm,
+  };
+  schema
+    .validate(formData.value, { abortEarly: false })
+    .then(() => {
+      errors.value = {};
+      return post(request);
+    })
+    .then(() => {
+      setUser(data.value);
+      alert("Success");
+      emit("go-to-login");
+    })
+    .catch((err) => {
+      err.inner.forEach((error) => {
+        errors.value[error.path] = error.message;
+      });
+    });
+};
 </script>
 
 <template>
   <LoadingView v-if="loading" />
   <div class="form-wrapper">
     <h2>Регистрация</h2>
-    
-    <form class="form" method="POST" @submit.prevent="onSubmitRegisterForm" novalidate :validation-schema="schema">
+
+    <form
+      class="form"
+      method="POST"
+      @submit.prevent="onSubmitRegisterForm"
+      novalidate
+      :validation-schema="schema"
+    >
       <label for="email">Email</label>
-        <input type="email" id="email" v-model="formData.email" placeholder="Введите значение" @blur="validate('email')" />
-        <p class="error-message" v-if="!!errors.email">
-          {{ errors.email }}
+      <input
+        type="email"
+        id="email"
+        v-model="formData.email"
+        placeholder="Введите значение"
+        @blur="validate('email')"
+      />
+      <p class="error-message" v-if="!!errors.email">
+        {{ errors.email }}
+      </p>
+
+      <label for="password">Пароль</label>
+      <div class="password-wrapper">
+        <input
+          :type="passwordType"
+          id="password"
+          v-model="formData.password"
+          placeholder="Введите пароль"
+          @blur="validate('password')"
+        />
+        <ShowHidePasswordBtn
+          :isShown="isPasswordShown"
+          @toggleIsShown="toggleIsPasswordShown"
+        />
+      </div>
+
+      <p class="error-message" v-if="!!errors.password">
+        {{ errors.password }}
+      </p>
+
+      <label for="passwordConfirm">Пароль ещё раз</label>
+      <div class="password-wrapper">
+        <input
+          :type="passwordConfirmType"
+          id="passwordConfirm"
+          v-model="formData.passwordConfirm"
+          placeholder="Ввод|"
+          @blur="validate('passwordConfirm')"
+        />
+        <ShowHidePasswordBtn
+          :isShown="isPasswordConfirmShown"
+          @toggleIsShown="toggleIsPasswordConfirmShown"
+        />
+      </div>
+
+      <p class="error-message" v-if="!!errors.passwordConfirm">
+        {{ errors.passwordConfirm }}
+      </p>
+
+      <div class="form__footer">
+        <p class="account">
+          У вас есть аккаунт?
+          <a href="#" @click.prevent="onLoginLinkClick">Войдите</a>
         </p>
-
-        <label for="password">Пароль</label>
-        <div class="password-wrapper">
-          <input :type="passwordType" id="password" v-model="formData.password" placeholder="Введите пароль" @blur="validate('password')"  />
-          <ShowHidePasswordBtn :isShown="isPasswordShown" @toggleIsShown="toggleIsPasswordShown" /> 
-        </div>
-        
-        <p class="error-message" v-if="!!errors.password">
-          {{ errors.password }}
-        </p>
-
-
-        <label for="passwordConfirm">Пароль ещё раз</label>
-        <div class="password-wrapper">
-          <input :type="passwordConfirmType" id="passwordConfirm" v-model="formData.passwordConfirm" placeholder="Ввод|" @blur="validate('passwordConfirm')" />
-          <ShowHidePasswordBtn :isShown="isPasswordConfirmShown" @toggleIsShown="toggleIsPasswordConfirmShown" /> 
-        </div>
-        
-        <p class="error-message" v-if="!!errors.passwordConfirm">
-          {{ errors.passwordConfirm }}
-        </p>
-        
-
-        <div class="form__footer">
-          <p class="account">У вас есть аккаунт? <a href="#" @click.prevent="onLoginLinkClick">Войдите</a></p>
 
         <button type="submit">Зарегистрироваться</button>
-        </div>
+      </div>
 
-        <div v-if="error"  class="error-message">
-          {{ errorFields || errorMessage }}
-        </div> 
-
+      <div v-if="error" class="error-message">
+        {{ errorFields || errorMessage }}
+      </div>
     </form>
   </div>
 </template>
@@ -195,7 +225,7 @@ schema.validate(formData.value, { abortEarly: false })
   font-family: inherit;
   border-radius: 36px;
   background: var(--white);
-  padding:  16px;
+  padding: 16px;
   margin-bottom: 24px;
   width: 100%;
   max-width: 100%;
@@ -210,7 +240,7 @@ schema.validate(formData.value, { abortEarly: false })
   font-style: normal;
   font-weight: 400;
   line-height: 1.5;
-  color:var(--gray);
+  color: var(--gray);
 }
 
 .form__footer {
@@ -225,14 +255,14 @@ schema.validate(formData.value, { abortEarly: false })
   border-radius: 32px;
 }
 .error-message {
-  color: #FF7461;
+  color: #ff7461;
   font-size: var(--font-small);
   font-style: normal;
   font-weight: 400;
   line-height: 1.5;
   padding: 8px 20px;
   border-radius: 24px;
-  background: rgba(255, 116, 97, 0.10);
+  background: rgba(255, 116, 97, 0.1);
 }
 
 .password-wrapper {
@@ -247,14 +277,14 @@ schema.validate(formData.value, { abortEarly: false })
     font-style: normal;
     font-weight: 600;
     line-height: 1.1;
-}
+  }
 
-.account,
-.error-message {
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1.6;
+  .account,
+  .error-message {
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.6;
   }
 
   .form__footer {

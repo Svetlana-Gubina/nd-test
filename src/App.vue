@@ -1,14 +1,13 @@
 <script setup>
-import MainHeader from './components/MainHeader.vue'
+import MainHeader from "./components/MainHeader.vue";
 </script>
 
 <template>
-  <MainHeader/>
+  <MainHeader />
 
   <main class="page-main">
     <router-view />
   </main>
-  
 </template>
 
 <style scoped>
@@ -33,7 +32,7 @@ import MainHeader from './components/MainHeader.vue'
   .page-main {
     padding: 40px;
     flex-direction: column;
-    align-items:center;
+    align-items: center;
     height: calc(100vh - 50px);
   }
 }
