@@ -60,7 +60,7 @@ const target = ref(null);
 }
 .modal-container {
   width: 780px;
-  margin: 150px auto;
+  margin: 100px auto;
   padding: 80px;
   background-color: var(--bg-dark);
   border-radius: 2px;
