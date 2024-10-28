@@ -3,7 +3,7 @@
 <template>
   <div class="wrapper">
     <h2>Страница не найдена</h2>
-    <router-link to="/">На главную</router-link>
+    <router-link to="/nd-test">На главную</router-link>
   </div>
 </template>
 
