@@ -1,4 +1,4 @@
-import { createWebHashHistory, createRouter } from "vue-router";
+import { createWebHistory, createRouter } from "vue-router";
 import { AUTH_KEY } from "@/api/auth";
 
 const router = createRouter({
@@ -22,7 +22,7 @@ const router = createRouter({
       component: () => import("@/components/PageNotFoundView.vue"),
     },
   ],
-  history: createWebHashHistory(),
+  history: createWebHistory("/nd-test"),
 });
 
 router.beforeEach((to, from, next) => {
