@@ -87,5 +87,6 @@ const removeNote = (noteId) => {
 
 .wrapper button {
   margin-left: auto;
+  border: none;
 }
 </style>
