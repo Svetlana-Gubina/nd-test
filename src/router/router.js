@@ -22,7 +22,7 @@ const router = createRouter({
       component: () => import("@/components/PageNotFoundView.vue"),
     },
   ],
-  history: createWebHashHistory("/"),
+  history: createWebHistory("/"),
 });
 
 router.beforeEach((to, from, next) => {
